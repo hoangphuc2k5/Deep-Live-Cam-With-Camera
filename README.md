@@ -29,8 +29,8 @@ Dự án này là một công cụ thực hiện **face swap** (đổi mặt) th
 
 1. **Clone dự án**:
    ```powershell
-   git clone https://github.com/hacksider/Deep-Live-Cam.git
-   cd Deep-Live-Cam
+   git clone https://github.com/hoangphuc2k5/Deep-Live-Cam-With-Camera.git
+   cd Deep-Live-Cam-With-Camera
    ```
 
 2. **Cài đặt môi trường ảo**:
@@ -82,14 +82,6 @@ Công cụ này được tạo ra vì mục đích học thuật và sáng tạo
 
 ---
 
-## 📄 Giấy phép
-
-Dự án tuân theo các điều khoản trong file [LICENSE](LICENSE).
-
-
-<p align="center">
-  <img src="media/url_input_demo.png" alt="URL Input Feature" width="600">
-</p>
 
 ## Installation (Manual)
 
@@ -113,8 +105,8 @@ This is more likely to work on your computer but will be slower as it utilizes t
 **2. Clone the Repository**
 
 ```bash
-git clone https://github.com/hacksider/Deep-Live-Cam.git
-cd Deep-Live-Cam
+git clone https://github.com/hoangphuc2k5/Deep-Live-Cam-With-Camera.git
+cd Deep-Live-Cam-With-Camera
 ```
 
 **3. Download the Models**
