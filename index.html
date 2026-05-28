@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Live Cam Web</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Deep Live Cam</h1>
+        
+        <!-- Login Section -->
+        <div id="login_section" class="login-section">
+            <h2>Đăng nhập</h2>
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="username">Tên người dùng:</label>
+                    <input type="text" id="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu:</label>
+                    <input type="password" id="password">
+                </div>
+                <div class="form-group">
+                    <button id="login_btn">Đăng nhập</button>
+                </div>
+                <p id="login_error" class="error-message"></p>
+            </div>
+            
+        </div>
+        
+        <!-- Main Content Section (Hidden until login) -->
+        <div id="main_section" style="display:none;">
+            <!-- User Info -->
+            <div class="user-info-section">
+                <div class="user-info">
+                    <p>Xin chào, <strong id="current_username"></strong>! 
+                    <span id="video_count_info"></span></p>
+                    <button id="logout_btn">Đăng xuất</button>
+                </div>
+            </div>
+            
+            <!-- Processing Section -->
+            <div class="processing-section">
+                <h2>Xử lý Video/Ảnh</h2>
+                
+                <div class="upload-section">
+                    <div class="upload-item">
+                        <label for="image_source">Chọn ảnh nguồn</label>
+                        <input type="file" id="image_source" accept="image/*" class="file-input">
+                        <input type="url" id="image_source_url" placeholder="Hoặc nhập URL ảnh nguồn" class="url-input">
+                        <img id="source_preview" class="preview" style="display:none;">
+                        <div id="source_loading" class="loading-spinner" style="display:none;">Đang tải...</div>
+                        <div id="source_error" class="error-message" style="display:none;"></div>
+                    </div>
+                    <div class="upload-item">
+                        <label for="image_target">Chọn ảnh mục tiêu (tùy chọn)</label>
+                        <input type="file" id="image_target" accept="image/*" class="file-input">
+                        <input type="url" id="image_target_url" placeholder="Hoặc nhập URL ảnh mục tiêu" class="url-input">
+                        <img id="target_preview" class="preview" style="display:none;">
+                        <div id="target_loading" class="loading-spinner" style="display:none;">Đang tải...</div>
+                        <div id="target_error" class="error-message" style="display:none;"></div>
+                    </div>
+                    <div class="upload-item">
+                        <label for="video_target">Chọn video mục tiêu</label>
+                        <input type="file" id="video_target" accept="video/*" class="file-input">
+                        <input type="url" id="video_target_url" placeholder="Hoặc nhập URL video mục tiêu" class="url-input">
+                        <video id="video_preview" class="preview" controls style="display:none;"></video>
+                        <div id="video_loading" class="loading-spinner" style="display:none;">Đang tải...</div>
+                        <div id="video_error" class="error-message" style="display:none;"></div>
+                    </div>
+                </div>
+                
+                <div class="options">
+                    <div class="toggles">
+                        <label><input type="checkbox" id="keep_fps"> Giữ nguyên FPS</label>
+                        <label><input type="checkbox" id="keep_audio" checked> Giữ âm thanh</label>
+                        <label><input type="checkbox" id="multiple_faces"> Xử lý nhiều khuôn mặt</label>
+                        <label><input type="checkbox" id="show_fps"> Hiển thị FPS</label>
+                        <label><input type="checkbox" id="poisson_blend"> Trộn Poisson</label>
+                        <label><input type="checkbox" id="face_mapping"> Ánh xạ khuôn mặt</label>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <label for="face_enhancer">Tăng cường khuôn mặt</label>
+                        <select id="face_enhancer">
+                            <option value="none">Không</option>
+                            <option value="face_enhancer">Cơ bản</option>
+                            <option value="face_enhancer_gpen256">GPEN 256</option>
+                            <option value="face_enhancer_gpen512">GPEN 512</option>
+                        </select>
+                    </div>
+                    
+                    <div class="sliders">
+                        <div class="slider">
+                            <label for="transparency">Độ trong suốt: <span id="transparency_val">1.0</span></label>
+                            <input type="range" id="transparency" min="0" max="1" step="0.1" value="1.0">
+                        </div>
+                        <div class="slider">
+                            <label for="sharpness">Độ sắc nét: <span id="sharpness_val">0.0</span></label>
+                            <input type="range" id="sharpness" min="0" max="1" step="0.1" value="0.0">
+                        </div>
+                        <div class="slider">
+                            <label for="mouth_mask">Mặt nạ miệng: <span id="mouth_mask_val">0.0</span></label>
+                            <input type="range" id="mouth_mask" min="0" max="1" step="0.1" value="0.0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button id="start">Bắt đầu</button>
+                    <button id="stop">Dừng</button>
+                    <button id="preview">Xem trước</button>
+                    <button id="export">Xuất video</button>
+                </div>
+                
+                <p id="status_message" class="status-message">Chưa có hành động.</p>
+                <p id="progress_text" class="progress-text">Đang xử lý: 0% | 0/0</p>
+                
+                <!-- Progress Log -->
+                <div class="progress-log-container" style="display:none;">
+                    <h3>Progress Log</h3>
+                    <textarea id="progress_log" class="progress-log" readonly></textarea>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div id="progress_bar" class="progress-container" style="display:none;">
+                    <div class="progress-text-above">Tiến trình xử lý</div>
+                    <div class="progress-bar">
+                        <div id="progress_fill" class="progress-fill"></div>
+                    </div>
+                </div>
+                
+                <div id="loading" class="loading" style="display:none;">
+                    <div class="spinner"></div>
+                    <p>Đang xử lý...</p>
+                </div>
+                
+                <div id="result" style="display:none;">
+                    <h3>Kết quả</h3>
+                    <img id="result_image" class="preview" style="display:none;" />
+                    <video id="result_video" controls style="display:none;"></video>
+                    <div class="result-buttons">
+                        <a id="download_link" download="output.mp4">Tải xuống</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video Library Section -->
+            <div class="library-section">
+                <h2>Thư viện video của tôi</h2>
+                <div id="video_list" class="video-list">
+                    <p class="empty-message">Chưa có video nào. Hãy tạo video đầu tiên!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/script.js"></script>
+</body>
+</html>
